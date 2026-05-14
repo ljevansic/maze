@@ -46,7 +46,7 @@ def printMaze(maze, markX=None, markY=None):
                 # Display the wall or empty space:
                 print(maze[(x, y)], end='')
         print() # Print a newline after printing the row.
-    print(len(maze))
+    # print(len(maze))
 
 
 def visit(x, y):
