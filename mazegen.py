@@ -1,3 +1,4 @@
+import argparse
 import random
 
 WIDTH = 35 # Width of the maze (must be odd).
@@ -5,13 +6,21 @@ HEIGHT = 17 # Height of the maze (must be odd).
 assert WIDTH % 2 == 1 and WIDTH >= 3
 assert HEIGHT % 2 == 1 and HEIGHT >= 3
 SEED = 10
-random.seed(SEED)
+
+parser = argparse.ArgumentParser(description='Generate a maze.')
+parser.add_argument('--seed', type=int, default=SEED, help='Random seed for the maze generator')
+args = parser.parse_args()
+random.seed(args.seed)
 
 # Use these characters for displaying the maze:
 EMPTY = ' '
 MARK = '*'
+START = 'S'
+END = 'E'
 WALL = chr(9608) # Character 9608 is '█'
 NORTH, SOUTH, EAST, WEST = 'n', 's', 'e', 'w'
+START_POS = (1, 1)
+END_POS = (WIDTH - 2, HEIGHT - 2)
 
 # Create the filled-in maze data structure to start:
 maze = {}
@@ -29,6 +38,10 @@ def printMaze(maze, markX=None, markY=None):
             if markX == x and markY == y:
                 # Display the '@' mark here:
                 print(MARK, end='')
+            elif (x, y) == START_POS:
+                print(START, end='')
+            elif (x, y) == END_POS:
+                print(END, end='')
             else:
                 # Display the wall or empty space:
                 print(maze[(x, y)], end='')
@@ -96,6 +109,7 @@ def visit(x, y):
 # Carve out the paths in the maze data structure:
 hasVisited = [(1, 1)] # Start by visiting the top-left corner.
 visit(1, 1)
+maze[END_POS] = EMPTY
 
 # Display the final resulting maze data structure:
 printMaze(maze)
