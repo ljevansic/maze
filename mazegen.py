@@ -1,7 +1,7 @@
 import random
 
-WIDTH = 101  # Width of the maze (must be odd).
-HEIGHT = 75 # Height of the maze (must be odd).
+WIDTH = 35 # Width of the maze (must be odd).
+HEIGHT = 17 # Height of the maze (must be odd).
 assert WIDTH % 2 == 1 and WIDTH >= 3
 assert HEIGHT % 2 == 1 and HEIGHT >= 3
 SEED = 10
@@ -33,6 +33,7 @@ def printMaze(maze, markX=None, markY=None):
                 # Display the wall or empty space:
                 print(maze[(x, y)], end='')
         print() # Print a newline after printing the row.
+    print(len(maze))
 
 
 def visit(x, y):
