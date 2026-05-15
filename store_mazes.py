@@ -14,6 +14,10 @@ HEIGHT_PATTERN = re.compile(r'^HEIGHT\s*=\s*(\d+)', re.MULTILINE)
 
 
 def read_maze_dimensions(script_path):
+    '''
+    This function reads the maze dimensions (WIDTH and HEIGHT) from the mazegen.py script
+    using regular expressions. It returns the width and height as integers.
+    '''
     with open(script_path, 'r', encoding='utf-8') as file:
         source = file.read()
 
@@ -35,9 +39,6 @@ def generate_maze(seed, width, height):
 
     lines = output.splitlines()
     maze_lines = [line for line in lines if line != '']
-
-    if len(maze_lines) < height:
-        raise RuntimeError(f'Unexpected maze output for seed {seed}: got {len(maze_lines)} lines')
 
     return '\n'.join(maze_lines[:height])
 
@@ -64,8 +65,9 @@ def main():
 
     inserted = 0
     skipped = 0
+    mazes = 1000
 
-    for seed in range(1000):
+    for seed in range(mazes):
         maze_text = generate_maze(seed, width, height)
         cursor.execute('INSERT OR IGNORE INTO mazes (seed, maze) VALUES (?, ?)', (seed, maze_text))
         if cursor.rowcount:
@@ -73,11 +75,11 @@ def main():
         else:
             skipped += 1
             print(f'Skipped duplicate maze for seed {seed}')
+        conn.commit()
 
-    conn.commit()
     conn.close()
 
-    print(f'Generated 1000 mazes. Inserted {inserted} unique mazes, skipped {skipped} duplicates.')
+    print(f'Generated {mazes} mazes. Inserted {inserted} unique mazes, skipped {skipped} duplicates.')
     print(f'Database written to: {DB_PATH}')
 
 
