@@ -38,6 +38,8 @@ for i in range(len(MAZE)):
     if len(MAZE[i]) != WIDTH:
         MAZE[i] = [EMPTY] * WIDTH # Make this a blank row.
 
+steps = 0  # Counter for the number of steps
+
 def printMaze(maze):
     for y in range(HEIGHT):
         # Print each row.
@@ -54,6 +56,7 @@ def findStart(maze):
                 return (x, y) # Return the starting coordinates.
 
 def solveMaze(maze, x=None, y=None, visited=None):
+    global steps
     if x == None or y == None:
         x, y = findStart(maze)
         maze[y][x] = EMPTY # Get rid of the 'S' from the maze.
@@ -64,6 +67,7 @@ def solveMaze(maze, x=None, y=None, visited=None):
          return True # Found the exit, return True.
 
     maze[y][x] = PATH # Mark the path in the maze.
+    steps += 1  # Count this move
     visited.append(str(x) + ',' + str(y))
     # printMaze(maze) # Uncomment to view each forward step.
 
@@ -92,6 +96,7 @@ def solveMaze(maze, x=None, y=None, visited=None):
         if solveMaze(maze, x - 1, y, visited):
             return True # BASE CASE
 
+    steps += 1  # Count backtracking move
     maze[y][x] = EMPTY # Reset the empty space.
     #printMaze(maze) # Uncomment to view each backtrack step.
 
@@ -100,3 +105,4 @@ def solveMaze(maze, x=None, y=None, visited=None):
 printMaze(MAZE)  # Display the original maze.
 solveMaze(MAZE)
 printMaze(MAZE)  # Display the solved maze.
+print(f"Total steps: {steps}")

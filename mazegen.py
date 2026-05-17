@@ -9,6 +9,10 @@ SEED = 10
 
 parser = argparse.ArgumentParser(description='Generate a maze.')
 parser.add_argument('--seed', type=int, default=SEED, help='Random seed for the maze generator')
+parser.add_argument('--start-x', type=int, default=1, help='X coordinate of start position')
+parser.add_argument('--start-y', type=int, default=1, help='Y coordinate of start position')
+parser.add_argument('--end-x', type=int, default=WIDTH - 2, help='X coordinate of end position')
+parser.add_argument('--end-y', type=int, default=HEIGHT - 2, help='Y coordinate of end position')
 args = parser.parse_args()
 random.seed(args.seed)
 
@@ -19,8 +23,8 @@ START = 'S'
 END = 'E'
 WALL = chr(9608) # Character 9608 is '█'
 NORTH, SOUTH, EAST, WEST = 'n', 's', 'e', 'w'
-START_POS = (1, 1)
-END_POS = (WIDTH - 2, HEIGHT - 2)
+START_POS = (args.start_x, args.start_y)
+END_POS = (args.end_x, args.end_y)
 
 # Create the filled-in maze data structure to start:
 maze = {}
