@@ -175,78 +175,80 @@ def solveMaze_LeftHand(maze, x, y, width, height, direction=EAST):
 
 def solveMaze_AlternateLeft(maze, x, y, width, height, direction=EAST):
     """
-    Straight-first with left bias using iterative stack DFS.
+    Straight-first with left bias using iterative DFS.
+    Tries directions in order: straight, left, right, back.
     """
     steps = 0
     path = []
-    stack = [(x, y, direction, 0)]  # (x, y, direction, path_index)
-    came_from = {}  # Track parent for backtracking visualization
+    stack = [(x, y, direction, [])]   # (x, y, direction, current_path)
+    visited = set()
 
     while stack:
-        cx, cy, cdir, pidx = stack.pop()
+        cx, cy, cdir, current_path = stack.pop()
         steps += 1
+
+        if (cx, cy) in visited:
+            continue
+        visited.add((cx, cy))
 
         if maze[cy][cx] == EXIT:
             maze[cy][cx] = PATH
-            # Reconstruct path
-            path = [(cx, cy)]
-            while (cx, cy) in came_from:
-                cx, cy = came_from[(cx, cy)]
-                path.append((cx, cy))
-            path.reverse()
+            path = current_path + [(cx, cy)]
             return steps, path
 
-        if maze[cy][cx] != START and maze[cy][cx] != PATH:
+        if maze[cy][cx] != START:
             maze[cy][cx] = PATH
-            path.append((cx, cy))
+
+        new_path = current_path + [(cx, cy)]
 
         # Priority: straight, left, right, back
         for next_dir in [cdir, turn_left(cdir), turn_right(cdir), turn_back(cdir)]:
             nx, ny = get_next_pos(cx, cy, next_dir)
-            if is_valid_move(nx, ny, width, height, maze) and (nx, ny) not in came_from:
-                stack.append((nx, ny, next_dir, len(path)))
-                came_from[(nx, ny)] = (cx, cy)
+            if is_valid_move(nx, ny, width, height, maze) and (nx, ny) not in visited:
+                stack.append((nx, ny, next_dir, new_path))
 
     return steps, path
 
+
 def solveMaze_AlternateRight(maze, x, y, width, height, direction=EAST):
     """
-    Straight-first with right bias using iterative stack DFS.
+    Straight-first with right bias using iterative DFS.
+    Tries directions in order: straight, right, left, back.
     """
     steps = 0
     path = []
-    stack = [(x, y, direction, 0)]
-    came_from = {}
+    stack = [(x, y, direction, [])]
+    visited = set()
 
     while stack:
-        cx, cy, cdir, pidx = stack.pop()
+        cx, cy, cdir, current_path = stack.pop()
         steps += 1
+
+        if (cx, cy) in visited:
+            continue
+        visited.add((cx, cy))
 
         if maze[cy][cx] == EXIT:
             maze[cy][cx] = PATH
-            path = [(cx, cy)]
-            while (cx, cy) in came_from:
-                cx, cy = came_from[(cx, cy)]
-                path.append((cx, cy))
-            path.reverse()
+            path = current_path + [(cx, cy)]
             return steps, path
 
-        if maze[cy][cx] != START and maze[cy][cx] != PATH:
+        if maze[cy][cx] != START:
             maze[cy][cx] = PATH
-            path.append((cx, cy))
+
+        new_path = current_path + [(cx, cy)]
 
         # Priority: straight, right, left, back
         for next_dir in [cdir, turn_right(cdir), turn_left(cdir), turn_back(cdir)]:
             nx, ny = get_next_pos(cx, cy, next_dir)
-            if is_valid_move(nx, ny, width, height, maze) and (nx, ny) not in came_from:
-                stack.append((nx, ny, next_dir, len(path)))
-                came_from[(nx, ny)] = (cx, cy)
+            if is_valid_move(nx, ny, width, height, maze) and (nx, ny) not in visited:
+                stack.append((nx, ny, next_dir, new_path))
 
     return steps, path
 
 def main():
     # Increase recursion limit for deep maze solving
-    sys.setrecursionlimit(2000)
+    sys.setrecursionlimit(10000)
 
     # Parse command line arguments
     if len(sys.argv) < 2:
@@ -306,3 +308,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
